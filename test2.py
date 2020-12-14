@@ -8,3 +8,4 @@ base = [{'name': 'Сталево', 'url': 'https://apteka.ru/product/stalevo-005
 print(len(base))
 base.pop(3)
 print(len(base))
+print('Wow, new changes!')
