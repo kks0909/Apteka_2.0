@@ -23,5 +23,7 @@ with open('data.pickle', 'wb') as f:
 with open('data.pickle', 'rb') as f:
 	data_new = pickle.load(f)
 
+print(data_new)
 
-print(data_new[1])
+for source in data_new[3]:
+	print(source)

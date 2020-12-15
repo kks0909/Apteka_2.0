@@ -1,5 +1,5 @@
 import requests
-import gc
+
 
 headers = {
 		'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -39,7 +39,7 @@ def search(site):
 
 
 if __name__ == "__main__":
-	example = {'name': 'Сталево', 'url': 'https://stolichki.ru/drugs/stalevo-tab-50mg-12-5mg-200mg-30', 'Search': False, 'no': 'Товара нет в наличии', 'Cookie': {'cityId': '77', 'cityChosen': '1'}}
+	example = {'name': 'Сталево', 'url': 'https://aptekanevis.ru/catalog/poisk-preparata.php?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE&s=', 'Search': ' 50мг', 'no': False, 'Cookie': {'region': '1'}}
 	try:
 		search(example)
 	except SystemError as e:
