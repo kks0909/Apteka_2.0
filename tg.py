@@ -1,31 +1,26 @@
-import telebot
+import telebot, pickle
 from apteki import search
 from time import sleep
 from threading import Thread, Event
 from functools import reduce
 
 # TODO Автозапуск
-# TODO База во внешнем файле
 # TODO Лог изменений
-# TODO Автозагрузка
 
 bot = telebot.TeleBot('1411898629:AAHtO0bDuU1jLOfKaTANq3ssiJdI9_Km6wQ')
-# users = {'Ksenia': 354189613, 'Irina': 689601226}
-users = {'Ksenia': 354189613}
 admin = 354189613
-time = 10
-secret_password = 'ParentsT'
 new_user = {}
 new_source = {'name': None, 'url': None, 'Search': False, 'no': False, 'Cookie': None}
 removing_source = None
 WORK = True
-base = [{'name': 'Сталево', 'url': 'https://apteka.ru/product/stalevo-0050012502-n30-tabl-pplenoboloch-5e32775aca7bdc0001934127/', 'Search': False, 'no': 'Товара нет в наличии', 'Cookie': {'__ddg3': 'bVwJR3is1jg9ow9e', 'pipeline-id': '227969870', '__ddg1': 'EEmsSn0q7FSxdzMyC7Ph', 'authToken': 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZGM0MTgyYS03M2E4LTBlODQtZTJiZi0zMWU5ZjVlMzc1MDIiLCJqdGkiOiI1ZmQwZTU5NzNhM2E5MzAwMDE3OGNiNDciLCJleHAiOjE2MjMwNzc3ODMsIm5iZiI6MTYwNzUyNTc4Mywicm9sZSI6IlNoYWRvd1VzZXIiLCJpYXQiOjE2MDc1MjU3ODN9.QJObsnn5lniH94S8Dim-CL2qTsQzi2w45LBey9Jc0qmoysNUPi8T7-EwXul9Ge_ElcrkroOJVFxmdfxQBoas0AUv_pj9sG9pJQ-A4wNr8Psy8pjrXJriU2-nFBpLDYlg0AHFI564rbErHmWDrcIrQKNs4wOpbvDG_ao5drRKFoot18ziKMDOWKKHbXGWWTJ9b6MbDZiLW9Vs8wCEF7a4W0Y43nAke_pg-uaSU9lOiQn1OrRrFQj7hz97gaAnKeSfR3C2NJTvTPYpcywP0wyaOCHIROv29mCCXt7ID6FgBYwmGnQpVS7h1NMVnL8i26ra2MPMkDkxZHUY_zqECQy6mnS2XAoFGbJezCkHd38CPniJB6SniC6nQgPCLMtBEptFKp-SVjtxtK5eAAg7oDEjLt0IWDSINnxsiCa00JLEHk2ff_rJFskvke3-oLdOmIMTguBgx1-raVKK1EReMVhDz4IL9TvcSge6aH41n5V4ThDEJf9ciWSlqZFI-Q1YLBPuMK5V0Gc-Fn778B3s4Aqha5iXegEjf2Sj2QkOpu7vh2XZJB0d6Srbj_twfR8beXK7T1cngE6_x_tcJJtmLxT72s_Uu8HBaC4xXrhsOjpzb3AbXOz4Umz2g3T4So6On_0h_3gSDy6HJUgdpjqpO1-Lw_K_Xx72zpwRyMWPf7HRNKY', 'sessionId': 'ddc4182a-73a8-0e84-e2bf-31e9f5e37502', '__ddg2': 'IxqweLUKIIidejOm'}},
-		{'name': 'Сталево', 'url': 'https://stolichki.ru/drugs/stalevo-tab-50mg-12-5mg-200mg-30', 'Search': False, 'no': 'Товара нет в наличии', 'Cookie': {'cityId': '77', 'cityChosen': '1'}},
-		{'name': 'Сталево', 'url': 'https://ozerki.ru/catalog/?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE', 'Search': '12,5', 'no': False, 'Cookie': {'IWEB_CITY': '20238', 'SELECTED_CITY': '20238'}},
-		{'name': 'Сталево', 'url': 'https://apteka.marata41.ru/catalog/parkinson/stalevo-tabletki-50mg-12-5mg-200mg-30/', 'Search': False, 'no': 'Сообщить о поступлении', 'Cookie': None},
-		{'name': 'Сталево', 'url': 'https://aptekanevis.ru/catalog/poisk-preparata.php?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE&s=', 'Search': ' 50мг', 'no': False, 'Cookie': {'region': '1'}}]
 
+with open('data.pickle', 'rb') as f:
+	load_data = pickle.load(f)
 
+users = load_data[0]
+time = int(load_data[1])
+secret_password = load_data[2]
+base = load_data[3]
 
 def clear_new_source():
 	global new_source
@@ -58,6 +53,13 @@ def check_new_source(message):
 		bot.send_message(message.chat.id, 'Ошибка: {}'.format(e))
 	except Exception as e:
 		bot.send_message(message.chat.id, e)
+	bot.send_message(message.chat.id, 'Вы добавили новый источник.')
+	clear_new_source()
+
+
+def write_new_data():
+	with open('data.pickle', 'wb') as f:
+		pickle.dump([users, time, secret_password, base], f)
 
 
 @bot.message_handler(commands=['start'])
@@ -130,6 +132,7 @@ def get_name(message):
 def query_handler(call):
 	if call.data == 'new_user_yes':
 		users.update(new_user)
+		write_new_data()
 		bot.send_message(admin, 'Все пользователи:\n{}'.format(users))
 	if call.data == 'new_user_no':
 		bot.send_message(new_user.popitem()[1], 'Авторизация отклонена.')
@@ -141,11 +144,9 @@ def query_handler(call):
 		bot.register_next_step_handler(call.message, input_search)
 	if call.data == 'new_source_yes':
 		base.append(new_source)
+		write_new_data()
 		bot.send_message(call.message.chat.id, 'Проверка нового источника.')
 		bot.register_next_step_handler(call.message, check_new_source)
-
-		bot.send_message(call.message.chat.id, 'Вы добавили новый источник.')
-		clear_new_source()
 	if call.data == 'new_source_no':
 		bot.send_message(call.message.chat.id, 'Запрос отклонен.')
 		clear_new_source()
@@ -160,6 +161,7 @@ def new_time(message):
 	if message.text.isnumeric():
 		global time
 		time = int(message.text)
+		write_new_data()
 		bot.send_message(message.chat.id, 'Вы изменили интервал опроса. \nТекущий: {}'.format(time))
 		bot.send_message(admin, 'Был изменен интервал опроса пользователем {}. \nТекущий: {}'.format(message.from_user.first_name, time))
 		print(time)
@@ -224,6 +226,7 @@ def remove_source(message):
 def change_password(message):
 	global secret_password
 	secret_password = message.text
+	write_new_data()
 	bot.register_next_step_handler(message, start_message)
 
 

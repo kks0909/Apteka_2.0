@@ -5,10 +5,15 @@ bot_name = '@Mymrik_bot'
 bot_url = url = "https://api.telegram.org/bot{token}/sendMessage".format(token=bot_token)
 users = {'Ksenia': 354189613, 'Irina': 689601226}
 
-# @bot_token.message_handler(commands=['start'])
-# def start_message(message):
-# 	bot_token.send_message(message.chat.id, 'Привет, ты написал мне /start')
-for person in users:
-	bot_token.send_message(users.get(person), 'Simple text')
+def do_something():
+	print(users)
 
-# bot_token.polling()
+
+if __name__ == "__main__":
+	# @bot_token.message_handler(commands=['start'])
+	# def start_message(message):
+	# 	bot_token.send_message(message.chat.id, 'Привет, ты написал мне /start')
+	for person in users:
+		bot_token.send_message(users.get(person), 'Simple text')
+
+	# bot_token.polling()
