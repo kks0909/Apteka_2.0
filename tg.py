@@ -4,6 +4,7 @@ from time import sleep
 from threading import Thread, Event
 from functools import reduce
 
+# TODO Автозапуск
 # TODO База во внешнем файле
 # TODO Лог изменений
 # TODO Автозагрузка
@@ -48,6 +49,16 @@ def repeated_search():
 			# event.wait(time)
 			sleep(time * 60)
 		sleep(5)
+
+
+def check_new_source(message):
+	try:
+		search(new_source)
+	except SystemError as e:
+		bot.send_message(message.chat.id, 'Ошибка: {}'.format(e))
+	except Exception as e:
+		bot.send_message(message.chat.id, e)
+
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
@@ -121,7 +132,7 @@ def query_handler(call):
 		users.update(new_user)
 		bot.send_message(admin, 'Все пользователи:\n{}'.format(users))
 	if call.data == 'new_user_no':
-		bot.send_message(new_user.popitem()[1], 'Авторизация отклонена')
+		bot.send_message(new_user.popitem()[1], 'Авторизация отклонена.')
 	if call.data == 'url_to_end_page':
 		bot.send_message(call.message.chat.id, 'Введите признак отсутствия:\n(например, "Товар закончился" или "Сообщить о поступлении")')
 		bot.register_next_step_handler(call.message, input_no)
@@ -130,16 +141,19 @@ def query_handler(call):
 		bot.register_next_step_handler(call.message, input_search)
 	if call.data == 'new_source_yes':
 		base.append(new_source)
-		bot.send_message(call.message.chat.id, 'Вы добавили новый источник')
+		bot.send_message(call.message.chat.id, 'Проверка нового источника.')
+		bot.register_next_step_handler(call.message, check_new_source)
+
+		bot.send_message(call.message.chat.id, 'Вы добавили новый источник.')
 		clear_new_source()
 	if call.data == 'new_source_no':
-		bot.send_message(call.message.chat.id, 'Запрос отклонен')
+		bot.send_message(call.message.chat.id, 'Запрос отклонен.')
 		clear_new_source()
 	if call.data == 'remove_source_yes':
 		base.pop(removing_source)
-		bot.send_message(call.message.chat.id, 'Вы удалили источник')
+		bot.send_message(call.message.chat.id, 'Вы удалили источник.')
 	if call.data == 'remove_source_no':
-		bot.send_message(call.message.chat.id, 'Запрос отклонен')
+		bot.send_message(call.message.chat.id, 'Запрос отклонен.')
 
 
 def new_time(message):
