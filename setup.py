@@ -8,5 +8,5 @@ setup(
 	license='',
 	author='Ksenia',
 	author_email='kksenia0909@gmail.com',
-	description='Tg bot for searching pharmacy'
+	description='Tg bot for searching.'
 )
