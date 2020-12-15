@@ -3,6 +3,7 @@ from apteki import search
 from time import sleep
 from threading import Thread, Event
 from functools import reduce
+from datetime import datetime
 
 # TODO Автозапуск
 # TODO Лог изменений
@@ -13,6 +14,7 @@ new_user = {}
 new_source = {'name': None, 'url': None, 'Search': False, 'no': False, 'Cookie': None}
 removing_source = None
 WORK = True
+last_search_time = 0
 
 with open('data.pickle', 'rb') as f:
 	load_data = pickle.load(f)
@@ -40,7 +42,9 @@ def repeated_search():
 					print("2")
 					for person in users:
 						bot.send_message(users.get(person), e)
-				print('*')
+			print(datetime.now())
+			global last_search_time
+			last_search_time = datetime.now()
 			# event.wait(time)
 			sleep(time * 60)
 		sleep(5)
@@ -65,7 +69,7 @@ def write_new_data():
 @bot.message_handler(commands=['start'])
 def start_message(message):
 	keyboard = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-	keyboard.add('Добавиться', 'Изменить время опроса', 'Вывести список источников', 'Добавить источник', 'Удалить источник', 'Приостановить', 'Запустить')
+	keyboard.add('Добавиться', 'Изменить время опроса', 'Вывести время последнего опроса', 'Вывести список источников', 'Добавить источник', 'Удалить источник', 'Приостановить', 'Запустить')
 	bot.send_message(message.chat.id, '?', reply_markup=keyboard)
 
 
@@ -79,6 +83,8 @@ def reply(message):
 			bot.send_message(message.chat.id, 'Текущее время опроса:\n{}'.format(time))
 			bot.send_message(message.chat.id, 'Введите время в минутах:')
 			bot.register_next_step_handler(message, new_time)
+		elif message.text == 'Вывести время последнего опроса':
+			bot.send_message(message.chat.id, 'Последний опрос:\n{}'.format(last_search_time))
 		elif message.text == 'Вывести список источников':
 			bot.send_message(message.chat.id, reduce(lambda s1, s2: s1 + s2, list(map(lambda item: '{}\n{}\n\n'.format(item['name'], item['url']), base))))
 		elif message.text == 'Добавить источник':
