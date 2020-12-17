@@ -38,10 +38,13 @@ def repeated_search():
 				except SystemError as e:
 					bot.send_message(admin, e)
 					print("1")
-				except Exception as e:
+				except Warning as e:
 					print("2")
 					for person in users:
 						bot.send_message(users.get(person), e)
+				except AssertionError as e:
+					bot.send_message(admin, e)
+					print("3")
 			print(datetime.now())
 			global last_search_time
 			last_search_time = datetime.now()

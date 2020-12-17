@@ -18,10 +18,8 @@ headers = {
 def search(site):
 	try:
 		r = requests.get(site['url'], headers=headers, cookies=site['Cookie'])
-		assert (r.status_code == 200), ("Ошибка при открытии.\n Код ответа: {}\n".format(r.status_code), site['url'])
-	except SystemError as e:
-		print('Ошибка: ', e, site['url'])
-		return
+	except:
+		raise AssertionError("Ошибка при открытии.\n Код ответа: \n", site['url'])
 	else:
 		if not site['Search']:
 			result = True if r.text.find(site['no']) == -1 else False  # Не найдет, если есть в наличии
@@ -35,17 +33,21 @@ def search(site):
 				raise SystemError('Нет названия лекарства на странице.')
 			else:
 				if result:
-					raise Exception('{} появился!\n {}'.format(site['name'], site['url']))
+					raise Warning('{} появился!\n {}'.format(site['name'], site['url']))
 
+	# finally:
+	# 	return
 
 if __name__ == "__main__":
-	example = {'name': 'Сталево', 'url': 'https://aptekanevis.ru/catalog/poisk-preparata.php?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE&s=', 'Search': ' 50мг', 'no': False, 'Cookie': {'region': '1'}}
+	example = {'name': 'Сталево', 'url': 'https://apkanevis.ru/catalog/poisk-preparata.php?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE&s=', 'Search': ' 150мг', 'no': False, 'Cookie': {'region': '1'}}
 	try:
 		search(example)
 	except SystemError as e:
-		print("1")
-	except Exception as e:
-		print("2")
+		print("1, ", e)
+	except AssertionError as e:
+		print("3, ", e)
+	except Warning as e:
+		print("2, ", e)
 
 #
 # with open("r2.html","w",encoding="utf-8") as f:
