@@ -39,7 +39,7 @@ def search(site):
 	# 	return
 
 if __name__ == "__main__":
-	example = {'name': 'Сталево', 'url': 'https://apkanevis.ru/catalog/poisk-preparata.php?q=%D1%81%D1%82%D0%B0%D0%BB%D0%B5%D0%B2%D0%BE&s=', 'Search': ' 150мг', 'no': False, 'Cookie': {'region': '1'}}
+	example = {'name': 'Сталево', 'url': 'https://www.acmespb.ru/preparaty/stalevo/4607018262084', 'Search': False, 'no': 'Найдено позиций: 1', 'Cookie': None}
 	try:
 		search(example)
 	except SystemError as e:
