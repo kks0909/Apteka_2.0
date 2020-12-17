@@ -134,9 +134,10 @@ def reply(message):
 				logging.info('Открытие админской панели.')
 				markup = telebot.types.InlineKeyboardMarkup()
 				markup.add(telebot.types.InlineKeyboardButton(text='Изменить пароль', callback_data='change_password'))
+				markup.add(telebot.types.InlineKeyboardButton(text='Показать пользователей', callback_data='show_users'))
 				markup.add(telebot.types.InlineKeyboardButton(text='Удалить пользователя', callback_data='remove_user'))
 				markup.add(telebot.types.InlineKeyboardButton(text='Прислать лог', callback_data='send_log'))
-				bot.send_message(admin, text=f'?', reply_markup=markup)
+				bot.send_message(admin, text='?', reply_markup=markup)
 		else:
 			logging.info(f'Ввод неверной команды: {message.text} пользователем {users.get(message.chat.id)}({message.chat.first_name}).')
 			bot.send_message(message.chat.id, 'Введена неверная команда, либо у Вас нет прав на совершение действия.')
@@ -179,7 +180,7 @@ def query_handler(call):
 		logging.info(f'Подтверждение админом добавления нового пользователя {new_user}.')
 		users.update(new_user)
 		write_new_data()
-		bot.send_message(admin, f'Все пользователи:\n{users.values()}')
+		bot.send_message(admin, f'Все пользователи:\n' + reduce(lambda s1, s2: s1 + s2, list(map(lambda item: f'{users.get(item)} ({item})\n', users))))
 	elif call.data == 'new_user_no':
 		logging.info(f'Отклонение админом добавления нового пользователя {new_user}.')
 		bot.send_message(new_user.popitem()[0], 'Авторизация отклонена.')
@@ -192,6 +193,7 @@ def query_handler(call):
 		logging.info('Ввод ключа поиска')
 		bot.register_next_step_handler(call.message, input_search)
 	elif call.data == 'new_source_yes':
+		base.append(new_source)
 		base.append(new_source)
 		write_new_data()
 		logging.info(f'Проверка нового источника добавленного пользователем {call.message.chat.first_name}({call.message.chat.id}).')
@@ -215,6 +217,9 @@ def query_handler(call):
 		logging.info('Попытка изменить пароль админом.')
 		bot.send_message(admin, 'Введите новый пароль:')
 		bot.register_next_step_handler(call.message, change_password)
+	elif call.data == 'show_users':
+		logging.info('Вывод всех пользователей админом.')
+		bot.send_message(admin, reduce(lambda s1, s2: s1 + s2, list(map(lambda item: f'{users.get(item)} ({item})\n', users))))
 	elif call.data == 'remove_user':
 		logging.info('Попытка удалить пользователя админом.')
 		bot.send_message(admin, reduce(lambda s1, s2: s1 + s2, list(map(lambda item: f'{users.get(item)} ({item})\n', users))))
@@ -224,12 +229,12 @@ def query_handler(call):
 			bot.send_document(admin, log_file)
 	elif call.data == 'remove_user_yes':
 		logging.info(f'Удаление пользователя {users.get(removing_user)} админом.')
-		base.pop(removing_user)
+		users.pop(removing_user)
 		write_new_data()
-		bot.send_message(call.message.chat.id, 'Вы удалили пользователя.')
+		bot.send_message(admin, 'Вы удалили пользователя.')
 	elif call.data == 'remove_user_no':
 		logging.info(f'Отклонение удаления пользователя {users.get(removing_user)} админом.')
-		bot.send_message(call.message.chat.id, 'Запрос отклонен.')
+		bot.send_message(admin, 'Запрос отклонен.')
 
 
 def new_time(message):
@@ -314,7 +319,7 @@ def remove_user(message):
 		markup = telebot.types.InlineKeyboardMarkup()
 		markup.add(telebot.types.InlineKeyboardButton(text="Да", callback_data="remove_user_yes"))
 		markup.add(telebot.types.InlineKeyboardButton(text="Нет", callback_data="remove_user_no"))
-		bot.send_message(message.chat.id, text=f'Вы удаляете {users.get(message.text)}?', reply_markup=markup)
+		bot.send_message(message.chat.id, text=f'Вы удаляете {users.get(int(message.text))}?', reply_markup=markup)
 	elif message.text == 'N':
 		logging.info(f'Отмена удаления пользователя {users.get(message.text)} админиом.')
 	else:
