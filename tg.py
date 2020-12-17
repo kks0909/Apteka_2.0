@@ -242,7 +242,7 @@ def change_password(message):
 if __name__ == "__main__":
 	bot.send_message(admin, 'Бот перезапущен')
 	event = Event()
-	p2 = Thread(target=bot.polling)
+	p2 = Thread(target=bot.infinity_polling)
 	p1 = Thread(target=repeated_search)
 	p1.start()
 	p2.start()
