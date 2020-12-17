@@ -185,7 +185,7 @@ def query_handler(call):
 		logging.info(f'Отклонение админом добавления нового пользователя {new_user}.')
 		bot.send_message(new_user.popitem()[0], 'Авторизация отклонена.')
 	elif call.data == 'url_to_end_page':
-		bot.send_message(call.message.chat.id, 'Введите признак отсутствия:\n(например, "Товар закончился" или "Сообщить о поступлении")')
+		bot.send_message(call.message.chat.id, 'Введите признак отсутствия списком:\n(например, "Товар закончился" или "Сообщить о поступлении")')
 		logging.info('Ввод признака отсутствия')
 		bot.register_next_step_handler(call.message, input_no)
 	elif call.data == 'url_to_list':

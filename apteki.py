@@ -22,7 +22,8 @@ def search(site):
 		raise AssertionError(f'Ошибка при открытии страницы {site["url"]}')
 	else:
 		if not site['Search']:
-			result = True if r.text.find(site['no']) == -1 else False  # Не найдет, если есть в наличии
+			for no in site['no']:
+				result = True if r.text.find(no) == -1 else False  # Не найдет, если есть в наличии
 		else:
 			result = True if r.text.find(site['Search']) != -1 else False  # Не найдет, если нет в наличии
 
@@ -39,7 +40,7 @@ def search(site):
 	# 	return
 
 if __name__ == "__main__":
-	example = {'name': 'Сталево', 'url': 'https://www.acmespb.ru/preparaty/stalevo/4607018262084', 'Search': False, 'no': 'Найдено позиций: 1', 'Cookie': None}
+	example = {'name': 'Сталево', 'url': 'https://www.acmespb.ru/preparaty/stalevo/4607018262084', 'Search': False, 'no': ['Найдено позиций: 0', 'Найдено позиций: 1'], 'Cookie': None}
 	try:
 		search(example)
 	except SystemError as e:
