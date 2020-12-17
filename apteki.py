@@ -19,7 +19,7 @@ def search(site):
 	try:
 		r = requests.get(site['url'], headers=headers, cookies=site['Cookie'])
 	except:
-		raise AssertionError("Ошибка при открытии.\n Код ответа: \n", site['url'])
+		raise AssertionError(f'Ошибка при открытии страницы {site["url"]}')
 	else:
 		if not site['Search']:
 			result = True if r.text.find(site['no']) == -1 else False  # Не найдет, если есть в наличии
@@ -30,10 +30,10 @@ def search(site):
 			# 	f.write(r.text)
 
 			if r.text.find(site['name']) == -1:
-				raise SystemError('Нет названия лекарства на странице.')
+				raise SystemError(f'Нет названия {site["name"]} на странице {site["url"]}.')
 			else:
 				if result:
-					raise Warning('{} появился!\n {}'.format(site['name'], site['url']))
+					raise Warning(f'{site["name"]} появился!\n {site["url"]}.')
 
 	# finally:
 	# 	return
