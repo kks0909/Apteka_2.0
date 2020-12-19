@@ -18,6 +18,7 @@ headers = {
 def search(site):
 	try:
 		r = requests.get(site['url'], headers=headers, cookies=site['Cookie'])
+		assert (r.status_code == 200)
 	except:
 		raise AssertionError(f'Ошибка при открытии страницы {site["url"]}')
 	else:
