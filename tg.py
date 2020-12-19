@@ -8,7 +8,8 @@ from datetime import datetime, date
 # TODO Лог изменений
 # TODO https://www.acmespb.ru/preparaty/stalevo/4607018262084 Увеличение наименования
 
-logging.basicConfig(filename=f'{date.today()}.txt', filemode='a', level=logging.DEBUG, format='%(levelname)s - %(asctime)s - %(message)s', datefmt='%H:%M:%S')
+# path  = 'Logs/'
+logging.basicConfig(filename='Logs/' + f'{date.today()}.txt', filemode='a', level=logging.DEBUG, format='%(levelname)s - %(asctime)s - %(message)s', datefmt='%H:%M:%S')
 bot = telebot.TeleBot('1411898629:AAHtO0bDuU1jLOfKaTANq3ssiJdI9_Km6wQ')
 admin = 354189613
 new_user = {}
